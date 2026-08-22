@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robby Gillis — Technical Program Manager</title>
+<meta name="description" content="Robby Gillis — Technical Program Manager & delivery leader across blockchain, AI, fintech, healthcare, media, and enterprise platforms.">
+
+<!--
+  ============================================================
+  EDIT ME — quick checklist before you publish:
+  1. Search "your-email@example.com"      → your real email
+  3. Search "github.com/your-handle"      → your real GitHub (or delete the link)
+  4. Search "[Add Company]"               → your current employer
+  5. Search "resume.pdf"                  → link to your actual resume file
+  6. Search "RG" (in .avatar-placeholder) → swap for <img src="your-photo.jpg">
+  7. Projects section has 3 placeholder cards — replace as you ship apps
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper: #F1F4F7;
+    --paper-line: #D7E0E8;
+    --ink: #16283F;
+    --ink-soft: #4C5F76;
+    --rail: #B9C7D4;
+    --signal: #E4602A;
+    --signal-soft: #FBE3D5;
+    --teal: #1E7A73;
+    --card: #FFFFFF;
+    --radius: 3px;
+    --max: 860px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-line) 1px, transparent 1px),
+      var(--paper);
+    background-size: 28px 28px, 28px 28px, auto;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--teal); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
+  }
+
+  h1,h2,h3{ font-family: 'Space Grotesk', sans-serif; margin: 0; color: var(--ink); }
+
+  .label{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- sticky roadmap nav ---------- */
+  .roadmap-nav{
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(241,244,247,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--paper-line);
+  }
+  .roadmap-track{
+    max-width: var(--max); margin: 0 auto; padding: 14px 28px;
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto;
+  }
+  .roadmap-name{
+    font-family:'Space Grotesk'; font-weight:700; font-size: 0.95rem;
+    margin-right: 24px; white-space: nowrap; color: var(--ink);
+  }
+  .roadmap-line{
+    flex: 1; position: relative; height: 2px; background: var(--rail);
+    min-width: 40px; margin: 0 6px;
+  }
+  .roadmap-fill{
+    position: absolute; top:0; left:0; height:100%; width: 0%;
+    background: var(--signal);
+    transition: width 0.15s linear;
+  }
+  .roadmap-links{ display:flex; align-items:center; gap: 2px; }
+  .milestone{
+    display:flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono'; font-size:0.72rem; text-transform:uppercase;
+    letter-spacing:0.08em; color: var(--ink-soft);
+    padding: 6px 12px; white-space:nowrap; border-radius: var(--radius);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .milestone:hover, .milestone.active{ color: var(--ink); background: var(--signal-soft); text-decoration:none; }
+  .milestone .dot{
+    width:7px; height:7px; border-radius:50%; background: var(--rail); flex-shrink:0;
+    transition: background 0.15s ease;
+  }
+  .milestone.active .dot, .milestone:hover .dot{ background: var(--signal); }
+
+  /* ---------- hero ---------- */
+  .hero{ padding: 86px 0 70px; }
+  .hero .label{ display:block; margin-bottom: 18px; }
+  .hero h1{
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    line-height: 1.05; letter-spacing: -0.01em;
+  }
+  .hero .role{
+    margin-top: 14px; font-size: 1.15rem; color: var(--ink-soft); font-weight: 500;
+    max-width: 46ch;
+  }
+  .hero p.bio{ margin-top: 22px; max-width: 56ch; color: var(--ink-soft); font-size: 1.02rem; }
+
+  .avatar-placeholder{
+    width: 84px; height: 84px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk'; font-weight:700; font-size: 1.6rem;
+    margin-bottom: 26px; border: 3px solid var(--card);
+    box-shadow: 0 0 0 1px var(--paper-line);
+  }
+
+  .cta-row{ display:flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .btn{
+    font-family:'IBM Plex Mono'; font-size: 0.82rem; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 11px 20px; border-radius: var(--radius);
+    display:inline-flex; align-items:center; gap:8px; border: 1px solid var(--ink);
+    transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
+  }
+  .btn:hover{ text-decoration:none; transform: translateY(-1px); }
+  .btn-solid{ background: var(--ink); color: var(--paper); }
+  .btn-solid:hover{ background: var(--signal); border-color: var(--signal); }
+  .btn-outline{ color: var(--ink); }
+  .btn-outline:hover{ background: var(--ink); color: var(--paper); }
+
+  /* ---------- sections ---------- */
+  section{ padding: 64px 0; border-top: 1px solid var(--paper-line); }
+  .section-head{ display:flex; align-items:baseline; gap: 14px; margin-bottom: 34px; }
+  .section-head .label{ margin:0; }
+  .section-head h2{ font-size: 1.5rem; }
+
+  #about p{ max-width: 62ch; color: var(--ink-soft); }
+  #about p + p{ margin-top: 14px; }
+
+  /* ---------- experience timeline ---------- */
+  .timeline{ position: relative; padding-left: 30px; }
+  .timeline::before{
+    content:''; position:absolute; left: 5px; top: 6px; bottom: 6px; width: 2px;
+    background: var(--rail);
+  }
+  .entry{ position: relative; padding-bottom: 42px; }
+  .entry:last-child{ padding-bottom: 0; }
+  .entry::before{
+    content:''; position:absolute; left: -30px; top: 5px; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--paper); border: 2px solid var(--signal);
+  }
+  .entry.current::before{ background: var(--signal); }
+  .entry .dates{ font-family:'IBM Plex Mono'; font-size: 0.75rem; color: var(--ink-soft); }
+  .entry h3{ font-size: 1.15rem; margin-top: 6px; }
+  .entry .org{ color: var(--teal); font-weight: 500; font-size: 0.95rem; }
+  .entry p.desc{ margin-top: 10px; color: var(--ink-soft); max-width: 58ch; }
+
+  .earlier-career{
+    margin-top: 30px; padding-top: 26px; border-top: 1px dashed var(--rail);
+    padding-left: 30px;
+  }
+  .earlier-career .label{ display:block; margin-bottom: 8px; }
+  .earlier-career p{ margin:0; color: var(--ink-soft); font-size: 0.92rem; max-width: 62ch; }
+  .status-tag{
+    display:inline-block; font-family:'IBM Plex Mono'; font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 9px;
+    border-radius: 999px; margin-left: 10px; vertical-align: middle;
+  }
+  .status-tag.active{ background: var(--signal-soft); color: var(--signal); }
+
+  /* ---------- skills ---------- */
+  .skills-grid{ display:flex; flex-wrap:wrap; gap: 10px; }
+  .skill{
+    font-family:'IBM Plex Mono'; font-size: 0.78rem; padding: 7px 13px;
+    background: var(--card); border: 1px solid var(--paper-line); border-radius: var(--radius);
+    color: var(--ink-soft);
+  }
+
+  /* ---------- projects ---------- */
+  .project-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 18px; }
+  .project-card{
+    background: var(--card); border: 1px solid var(--paper-line); border-radius: var(--radius);
+    padding: 22px; display:flex; flex-direction:column; gap: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .project-card:hover{ transform: translateY(-3px); box-shadow: 0 10px 24px -14px rgba(22,40,63,0.35); }
+  .project-card .status-tag{ align-self:flex-start; margin-left:0; background: var(--paper); color: var(--ink-soft); border:1px dashed var(--rail); }
+  .project-card h3{ font-size: 1rem; }
+  .project-card p{ font-size: 0.9rem; color: var(--ink-soft); margin:0; flex-grow:1; }
+  .project-card .stub{
+    font-family:'IBM Plex Mono'; font-size: 0.72rem; color: var(--rail);
+  }
+
+  /* ---------- contact ---------- */
+  #contact{ border-bottom: none; }
+  .contact-grid{ display:flex; gap: 14px; flex-wrap: wrap; }
+
+  footer{ padding: 30px 0 50px; }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  footer .label{ margin:0; }
+
+  /* reveal-on-scroll */
+  .reveal{ opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 600px){
+    .hero{ padding: 60px 0 46px; }
+    section{ padding: 46px 0; }
+    .roadmap-name{ margin-right: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="roadmap-nav" aria-label="Page sections">
+  <div class="roadmap-track">
+    <span class="roadmap-name">RG</span>
+    <div class="roadmap-line"><div class="roadmap-fill" id="roadmapFill"></div></div>
+    <div class="roadmap-links">
+      <a class="milestone" data-target="about" href="#about"><span class="dot"></span>About</a>
+      <a class="milestone" data-target="experience" href="#experience"><span class="dot"></span>Experience</a>
+      <a class="milestone" data-target="projects" href="#projects"><span class="dot"></span>Projects</a>
+      <a class="milestone" data-target="contact" href="#contact"><span class="dot"></span>Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="avatar-placeholder" aria-hidden="true">RG</div>
+    <span class="label">Technical Program Manager</span>
+    <h1>Robby Gillis</h1>
+    <p class="role">Bringing system to ambiguous business goals into shipped technical roadmaps for startups and enterprise — blockchain, AI, fintech, health, broadcast media, and rights.</p>
+    <p class="bio">15+ years running cross-functional programs from zero to shipped: building PMOs, setting OKRs engineering teams can actually build against, and keeping delivery honest when timelines get hard.</p>
+    <div class="cta-row">
+      <a class="btn btn-solid" href="mailto:your-email@example.com">Email me</a>
+      <a class="btn btn-outline" href="https://www.linkedin.com/in/robbygillis/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn btn-outline" href="resume.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="label">01</span>
+      <h2>About</h2>
+    </div>
+    <div class="reveal">
+      <p>I'm a program manager who's spent the last 15+ years sitting between business strategy and engineering execution — translating OKRs into roadmaps that teams can actually deliver against, and translating delivery reality back into decisions leadership can act on.</p>
+      <p>Most recently I've managed high-ambiguity environments: building blockchain based products, developing blockchain networks, implementing AI-assisted workflows, and standing up operations from scratch before the delivery can start. I'm currently working on projects spanning an AI-assisted trading partner, capturing copyrights in DAWs, and more.</p>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="label">02</span>
+      <h2>Experience</h2>
+    </div>
+    <div class="timeline">
+
+      <div class="entry reveal">
+        <div class="dates">Oct 2025 — Mar 2026</div>
+        <h3>Technical Program Manager</h3>
+        <div class="org">VerQ Inc</div>
+        <p class="desc">Led delivery of a blockchain-based claims adjudication engine for a pre-seed funded project — owning the roadmap from concept through build.</p>
+      </div>
+
+      <div class="entry reveal">
+        <div class="dates">May 2021 — Oct 2024</div>
+        <h3>Technical Program Manager</h3>
+        <div class="org">Casper Labs (Prove AI)</div>
+        <p class="desc">Built the PMO from the ground up and led blockchain and AI-governance programs across the organization.</p>
+      </div>
+
+      <div class="entry reveal">
+        <div class="dates">Feb 2019 — Apr 2020</div>
+        <h3>Delivery Lead – E-Commerce</h3>
+        <div class="org">Royal Caribbean</div>
+        <p class="desc">Owned delivery leadership across globally dispersed teams — defining MVP milestones, KPI reporting, and sprint cadence across a scaled agile framework.</p>
+      </div>
+
+      <div class="entry reveal">
+        <div class="dates">Apr 2017 — Feb 2019</div>
+        <h3>Technical Program Manager</h3>
+        <div class="org">HBO Latin America</div>
+        <p class="desc">Directed the Next Generation Playout Model — a technical transformation of HBO's Latin America broadcast facility spanning 30+ networks.</p>
+      </div>
+
+      <div class="entry reveal">
+        <div class="dates">May 2016 — Apr 2017</div>
+        <h3>Project Manager</h3>
+        <div class="org">NBCU (Telemundo International)</div>
+        <p class="desc">Led kickoff-to-launch of Telemundo International's broadcast operations and TVE platform across the NBCU Latin America portfolio.</p>
+      </div>
+
+      <div class="entry reveal">
+        <div class="dates">Apr 2013 — Apr 2016</div>
+        <h3>Implementation Project Manager</h3>
+        <div class="org">Counterpoint Systems / Vistex Inc.</div>
+        <p class="desc">Led enterprise software implementations across media, music, and brand licensing clients in the U.S. and Latin America as Scrum Master.</p>
+      </div>
+
+    </div>
+
+    <div class="earlier-career reveal">
+      <div class="label">Earlier Career</div>
+      <p>Operations Manager, Warner Music Group LATAM (2012–2013) · Media Licensing Consultant, Viacom International (2011–2012) · Publishing Consultant, G Major Publishing Group (2010–2011) · Copyright &amp; Licensing Manager, Warner Music Group LATAM (2003–2010)</p>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="label">03</span>
+      <h2>Projects</h2>
+    </div>
+    <div class="project-grid reveal">
+
+      <div class="project-card">
+        <span class="status-tag">Planned</span>
+        <h3>OpenTrader</h3>
+        <p><!-- EDIT ME: add a real description --> An AI-assisted trading partner.</p>
+        <span class="stub"><!-- EDIT ME --> link coming soon</span>
+      </div>
+
+      <div class="project-card">
+        <span class="status-tag">Planned</span>
+        <h3>DAW Publishing Plug-In</h3>
+        <p><!-- EDIT ME: add a real description --> A plug-in for capturing copyrights directly inside DAWs.</p>
+        <span class="stub"><!-- EDIT ME --> link coming soon</span>
+      </div>
+
+      <div class="project-card">
+        <span class="status-tag">Planned</span>
+        <h3>Project name</h3>
+        <p>Short description of the web app goes here — what it does and who it's for.</p>
+        <span class="stub"><!-- EDIT ME --> link coming soon</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="label">04</span>
+      <h2>Contact</h2>
+    </div>
+    <div class="contact-grid reveal">
+      <a class="btn btn-outline" href="mailto:your-email@example.com">Email</a>
+      <a class="btn btn-outline" href="https://www.linkedin.com/in/robbygillis/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn btn-outline" href="https://github.com/your-handle" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="label">Robby Gillis — Technical Program Manager</span>
+    <span class="label" id="year"></span>
+  </div>
+</footer>
+
+<script>
+  // sticky nav: active section + progress rail
+  const sections = ['about','experience','projects','contact'].map(id => document.getElementById(id));
+  const milestones = document.querySelectorAll('.milestone');
+  const fill = document.getElementById('roadmapFill');
+
+  function onScroll(){
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+    fill.style.width = pct + '%';
+
+    let activeId = sections[0].id;
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.4) activeId = sec.id;
+    });
+    milestones.forEach(m => m.classList.toggle('active', m.dataset.target === activeId));
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  document.getElementById('year').textContent = '© ' + new Date().getFullYear();
+</script>
+
+</body>
+</html>
