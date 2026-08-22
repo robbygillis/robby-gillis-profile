@@ -9,12 +9,9 @@
 <!--
   ============================================================
   EDIT ME — quick checklist before you publish:
-  1. Search "your-email@example.com"      → your real email
-  3. Search "github.com/your-handle"      → your real GitHub (or delete the link)
-  4. Search "[Add Company]"               → your current employer
-  5. Search "resume.pdf"                  → link to your actual resume file
-  6. Search "RG" (in .avatar-placeholder) → swap for <img src="your-photo.jpg">
-  7. Projects section has 3 placeholder cards — replace as you ship apps
+  1. Search "resume.pdf"                  → link to your actual resume file
+  2. Search "RG" (in .avatar-placeholder) → swap for <img src="your-photo.jpg">
+  3. Project card 3 is still a blank placeholder — replace as you ship
   ============================================================
 -->
 
@@ -256,7 +253,7 @@
     <p class="role">Bringing system to ambiguous business goals into shipped technical roadmaps for startups and enterprise — blockchain, AI, fintech, health, broadcast media, and rights.</p>
     <p class="bio">15+ years running cross-functional programs from zero to shipped: building PMOs, setting OKRs engineering teams can actually build against, and keeping delivery honest when timelines get hard.</p>
     <div class="cta-row">
-      <a class="btn btn-solid" href="mailto:your-email@example.com">Email me</a>
+      <a class="btn btn-solid" id="email-btn-hero" href="#">Email me</a>
       <a class="btn btn-outline" href="https://www.linkedin.com/in/robbygillis/" target="_blank" rel="noopener">LinkedIn</a>
       <a class="btn btn-outline" href="resume.pdf" target="_blank" rel="noopener">Resume</a>
     </div>
@@ -375,9 +372,9 @@
       <h2>Contact</h2>
     </div>
     <div class="contact-grid reveal">
-      <a class="btn btn-outline" href="mailto:your-email@example.com">Email</a>
+      <a class="btn btn-outline" id="email-btn-contact" href="#">Email</a>
       <a class="btn btn-outline" href="https://www.linkedin.com/in/robbygillis/" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="btn btn-outline" href="https://github.com/your-handle" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-outline" href="https://github.com/robbygillis" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 </section>
@@ -418,6 +415,18 @@
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   document.getElementById('year').textContent = '© ' + new Date().getFullYear();
+
+  // Email is assembled at runtime (not left as plain text) to deter scraper bots.
+  (function(){
+    var user = ['r','o','b','b','y','g','i','l','l','i','s'].join('');
+    var domain = ['g','m','a','i','l'].join('') + '.' + ['c','o','m'].join('');
+    var address = user + '@' + domain;
+    var link = 'mailto:' + address;
+    ['email-btn-hero','email-btn-contact'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) { el.href = link; el.textContent = el.id === 'email-btn-hero' ? 'Email me' : address; }
+    });
+  })();
 </script>
 
 </body>
