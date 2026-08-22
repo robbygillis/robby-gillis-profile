@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crate &amp; Deck — virtual turntable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wood-dark:#2a1c13;
+    --wood-mid:#3f2a1b;
+    --wood-light:#5a3c26;
+    --wood-grain:rgba(0,0,0,0.18);
+    --metal:#c8cac6;
+    --metal-dark:#8d8f8b;
+    --metal-darker:#5f6260;
+    --vinyl:#141414;
+    --vinyl-sheen:rgba(255,255,255,0.06);
+    --amber:#e8a33d;
+    --amber-glow:rgba(232,163,61,0.55);
+    --cream:#ede3d0;
+    --felt:#1c140f;
+    --ink:#efe7d8;
+    --ink-dim:#a89a83;
+    --danger:#c1543a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:#0e0b08;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    padding:32px 16px 64px;
+    display:flex;
+    justify-content:center;
+  }
+  .stage{
+    width:100%;
+    max-width:960px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:clamp(28px,4vw,42px);
+    letter-spacing:0.01em;
+    margin:0 0 28px;
+    color:var(--ink);
+  }
+
+  /* ============ CONSOLE / CABINET ============ */
+  .console{
+    background:
+      repeating-linear-gradient(100deg, var(--wood-grain) 0 2px, transparent 2px 6px),
+      linear-gradient(160deg, var(--wood-light), var(--wood-mid) 45%, var(--wood-dark));
+    border-radius:14px;
+    padding:22px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4), 0 20px 40px rgba(0,0,0,0.5);
+    position:relative;
+  }
+  .console::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:10px;
+    pointer-events:none;
+  }
+
+  .deck-body{
+    background:linear-gradient(160deg,#3a3a38,#232321);
+    border-radius:8px;
+    padding:26px;
+    display:grid;
+    grid-template-columns:1fr 220px;
+    gap:26px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 2px 10px rgba(0,0,0,0.6);
+  }
+  @media (max-width:640px){
+    .deck-body{grid-template-columns:1fr;}
+  }
+
+  /* ---- platter well ---- */
+  .platter-well{
+    position:relative;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .platter-base{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, var(--metal), var(--metal-dark) 70%, var(--metal-darker));
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.5);
+  }
+  .platter{
+    position:absolute;
+    inset:5%;
+    border-radius:50%;
+    background:
+      radial-gradient(circle, transparent 0 32%, var(--felt) 33% 34%, transparent 35% 100%),
+      var(--vinyl);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+    will-change:transform;
+  }
+  .platter::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:repeating-radial-gradient(circle, var(--vinyl-sheen) 0 1px, transparent 1px 4px);
+    opacity:0.5;
+  }
+  .record-label{
+    position:absolute;
+    top:50%;left:50%;
+    width:34%;
+    aspect-ratio:1/1;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-size:11px;
+    line-height:1.3;
+    letter-spacing:0.03em;
+    padding:6px;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    transition:background 0.3s ease, color 0.3s ease;
+  }
+  .record-label span{ pointer-events:none; }
+  .record-label .rl-artist{ display:block; min-height:1.3em; font-family:'IBM Plex Mono',monospace; font-size:8px; opacity:0.75; margin-top:2px; text-transform:uppercase; letter-spacing:0.08em;}
+  .spindle{
+    position:absolute;
+    top:50%;left:50%;
+    width:10px;height:10px;
+    transform:translate(-50%,-50%);
+    background:var(--metal);
+    border-radius:50%;
+    box-shadow:0 1px 3px rgba(0,0,0,0.6);
+    z-index:3;
+  }
+
+  .strobe-ring{
+    position:absolute;
+    inset:5%;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:2;
+    container-type:size;
+  }
+  .strobe-dot{
+    position:absolute;
+    width:2px;height:6px;
+    background:rgba(255,255,255,0.55);
+    left:50%;top:0;
+    transform-origin:1px 50cqh;
+  }
+
+  /* ---- tonearm ---- */
+  .tonearm-pivot{
+    position:absolute;
+    top:6%;
+    right:2%;
+    width:16px;height:16px;
+    border-radius:50%;
+    background:var(--metal-dark);
+    box-shadow:0 1px 3px rgba(0,0,0,0.6);
+    z-index:5;
+  }
+  .tonearm{
+    position:absolute;
+    top:calc(6% + 8px);
+    right:calc(2% + 8px);
+    width:2px;height:2px;
+    transform:rotate(-28deg);
+    transform-origin:0 0;
+    transition:transform 1.1s cubic-bezier(.4,0,.2,1);
+    z-index:6;
+  }
+  .tonearm.playing{ transform:rotate(6deg); }
+  .arm-tube{
+    position:absolute;
+    top:0;left:-2px;
+    width:4px;
+    height:132px;
+    background:linear-gradient(90deg,var(--metal-darker),var(--metal),var(--metal-darker));
+    border-radius:3px;
+    transform-origin:top center;
+  }
+  .headshell{
+    position:absolute;
+    top:126px;left:-9px;
+    width:20px;height:12px;
+    background:var(--metal-darker);
+    border-radius:2px 2px 4px 4px;
+  }
+  .headshell::after{
+    content:"";
+    position:absolute;
+    bottom:-4px;left:8px;
+    width:3px;height:6px;
+    background:var(--danger);
+    border-radius:1px;
+  }
+  .counterweight{
+    position:absolute;
+    top:-16px;left:-8px;
+    width:18px;height:10px;
+    border-radius:5px;
+    background:radial-gradient(circle,var(--metal),var(--metal-darker));
+  }
+
+  /* ---- control panel ---- */
+  .control-panel{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .panel-card{
+    background:linear-gradient(160deg,#2c2c2a,#1c1c1b);
+    border-radius:8px;
+    padding:14px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .power-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .power-light{
+    width:9px;height:9px;
+    border-radius:50%;
+    background:#3a2a15;
+    box-shadow:inset 0 0 2px rgba(0,0,0,0.6);
+    transition:background 0.2s, box-shadow 0.2s;
+  }
+  .power-light.on{
+    background:var(--amber);
+    box-shadow:0 0 8px 2px var(--amber-glow);
+  }
+  .now-playing{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-dim);
+    letter-spacing:0.03em;
+  }
+  .now-playing strong{
+    display:block;
+    color:var(--ink);
+    font-family:'Oswald',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:0.01em;
+    margin-top:2px;
+  }
+
+  .btn-row{ display:flex; gap:8px; }
+  button.transport{
+    flex:1;
+    background:linear-gradient(160deg,#3d3d3b,#232321);
+    color:var(--ink);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:6px;
+    padding:10px 8px;
+    font-family:'Oswald',sans-serif;
+    font-size:13px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:background 0.15s, transform 0.05s;
+  }
+  button.transport:hover:not(:disabled){ background:linear-gradient(160deg,#48483f,#2a2a28); }
+  button.transport:active:not(:disabled){ transform:translateY(1px); }
+  button.transport:disabled{ opacity:0.35; cursor:not-allowed; }
+  button.transport.active{
+    background:linear-gradient(160deg,#7a4b1f,#4c2f10);
+    color:var(--amber);
+    border-color:rgba(232,163,61,0.4);
+  }
+
+  .speed-toggle{ display:flex; gap:6px; }
+  .speed-toggle button{
+    flex:1;
+    background:#1c1c1b;
+    color:var(--ink-dim);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:5px;
+    padding:6px 4px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    cursor:pointer;
+  }
+  .speed-toggle button.active{
+    color:var(--amber);
+    border-color:rgba(232,163,61,0.5);
+    background:#2a2115;
+  }
+
+  .pitch-block{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    justify-content:center;
+  }
+  .pitch-col{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .pitch-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  input[type=range].pitch{
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width:28px;
+    height:150px;
+    background:transparent;
+    cursor:pointer;
+  }
+  input[type=range].pitch::-webkit-slider-runnable-track{
+    width:6px;
+    background:linear-gradient(#111,#111) no-repeat center/2px 100%, #0a0a0a;
+    border-radius:3px;
+  }
+  input[type=range].pitch::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:26px;height:14px;
+    border-radius:3px;
+    background:linear-gradient(160deg,var(--metal),var(--metal-darker));
+    border:1px solid rgba(0,0,0,0.4);
+    margin-left:-10px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.5);
+  }
+  input[type=range].pitch::-moz-range-track{
+    width:6px;
+    background:#0a0a0a;
+    border-radius:3px;
+  }
+  input[type=range].pitch::-moz-range-thumb{
+    width:26px;height:14px;
+    border-radius:3px;
+    background:linear-gradient(160deg,var(--metal),var(--metal-darker));
+    border:1px solid rgba(0,0,0,0.4);
+  }
+  .pitch-readout{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--amber);
+    min-width:52px;
+    text-align:center;
+  }
+  .pitch-ticks{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    height:150px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9px;
+    color:var(--ink-dim);
+  }
+
+  /* ============ CRATE ============ */
+  .crate-wrap{
+    margin-top:26px;
+  }
+  .crate-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin-bottom:10px;
+  }
+  .crate{
+    background:linear-gradient(180deg,var(--wood-mid),var(--wood-dark));
+    border-radius:8px;
+    padding:16px 14px 6px;
+    box-shadow: inset 0 8px 14px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(0,0,0,0.3);
+    overflow-x:auto;
+  }
+  .crate-rail{
+    display:flex;
+    gap:6px;
+    align-items:flex-end;
+    min-height:150px;
+    padding-bottom:14px;
+  }
+  .spine{
+    flex:0 0 34px;
+    height:140px;
+    border-radius:3px 3px 0 0;
+    border:1px solid rgba(0,0,0,0.35);
+    cursor:pointer;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:8px;
+    transition:transform 0.15s ease, flex-basis 0.15s ease, box-shadow 0.15s ease;
+    position:relative;
+  }
+  .spine:hover{ transform:translateY(-8px); }
+  .spine:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+  .spine.selected{
+    transform:translateY(-14px);
+    box-shadow:0 6px 14px rgba(0,0,0,0.5);
+    flex-basis:40px;
+  }
+  .spine-text{
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    font-family:'Oswald',sans-serif;
+    font-size:11px;
+    letter-spacing:0.03em;
+    white-space:nowrap;
+    max-height:120px;
+    overflow:hidden;
+  }
+  .crate-hint{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-dim);
+    margin-top:10px;
+  }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .tonearm{ transition:none; }
+    .spine{ transition:none; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <p class="eyebrow">Home listening station</p>
+  <h1>Crate &amp; Deck</h1>
+  <p class="sr-only">A virtual turntable. Pick a record from the crate below, drop the needle, and adjust pitch with the vertical slider.</p>
+
+  <div class="console">
+    <div class="deck-body">
+
+      <div class="platter-well">
+        <div class="platter-base"></div>
+        <div class="platter" id="platter">
+          <div class="record-label" id="recordLabel">
+            <span>
+              <span id="labelTitle">No record loaded</span>
+              <span class="rl-artist" id="labelArtist">Select from the crate</span>
+            </span>
+          </div>
+        </div>
+        <div class="strobe-ring" id="strobeRing"></div>
+        <div class="spindle"></div>
+        <div class="tonearm-pivot"></div>
+        <div class="tonearm" id="tonearm">
+          <div class="counterweight"></div>
+          <div class="arm-tube"></div>
+          <div class="headshell"></div>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <div class="panel-card">
+          <div class="power-row">
+            <div class="power-light" id="powerLight"></div>
+            <div class="now-playing">
+              <span id="statusText">Standing by</span>
+              <strong id="nowPlayingTitle">—</strong>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="transport" id="playBtn" disabled>Play</button>
+            <button class="transport" id="stopBtn" disabled>Stop</button>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="crate-label" style="margin-bottom:10px;">Speed</div>
+          <div class="speed-toggle">
+            <button id="speed33" class="active">33⅓</button>
+            <button id="speed45">45</button>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="pitch-block">
+            <div class="pitch-ticks"><span>+8</span><span>+4</span><span>0</span><span>-4</span><span>-8</span></div>
+            <div class="pitch-col">
+              <span class="pitch-label">Pitch</span>
+              <input type="range" class="pitch" id="pitchSlider" min="-8" max="8" step="0.1" value="0" aria-label="Pitch control, percent">
+              <span class="pitch-readout" id="pitchReadout">0.0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="crate-wrap">
+    <p class="crate-label">The Record Crate — rare selections I have discovered and also produced — select an LP to load it on the deck</p>
+    <div class="crate">
+      <div class="crate-rail" id="crateRail"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  // Point "src" at your own audio file for each record — mp3, wav, m4a, and ogg
+  // all work. Paths are relative to this HTML file, so an "audio" folder next
+  // to it (as shipped here) is the simplest setup.
+  var RECORDS = [
+    { id:'r1', title:'Le Bracelet', artist:'La Planète Sauvage',
+      spine:'#7c3a1c', label:'#e8a33d', labelText:'#2a1706',
+      src:'audio/Le bracelet.mp3' },
+    { id:'r2', title:'When There Is No Sun', artist:'Sun Ra',
+      spine:'#1f4a44', label:'#cfe8de', labelText:'#12312b',
+      src:'audio/SunRa_When There Is No Sun.mp3' },
+    { id:'r3', title:'Expansions', artist:'By_ARK3',
+      spine:'#332a45', label:'#d9c9e8', labelText:'#241a33',
+      src:'audio/Expansions.mp3' },
+    { id:'r4', title:'KrownKeys', artist:'By_ARK3',
+      spine:'#154a63', label:'#bee7f0', labelText:'#0c2c3a',
+      src:'audio/KrownKeys.mp3' },
+    { id:'r5', title:'Rare', artist:'By_ARK3',
+      spine:'#96552f', label:'#f2d9b0', labelText:'#3a2205',
+      src:'audio/Rare.mp3' },
+    { id:'r6', title:'Merkle', artist:'By_ARK3',
+      spine:'#6e4a20', label:'#f0c987', labelText:'#3a2708',
+      src:'audio/Merkle.mp3' }
+  ];
+
+  var elCrateRail = document.getElementById('crateRail');
+  var elLabel = document.getElementById('recordLabel');
+  var elLabelTitle = document.getElementById('labelTitle');
+  var elLabelArtist = document.getElementById('labelArtist');
+  var elPlay = document.getElementById('playBtn');
+  var elStop = document.getElementById('stopBtn');
+  var elPower = document.getElementById('powerLight');
+  var elStatus = document.getElementById('statusText');
+  var elNowPlaying = document.getElementById('nowPlayingTitle');
+  var elPitch = document.getElementById('pitchSlider');
+  var elPitchOut = document.getElementById('pitchReadout');
+  var elPlatter = document.getElementById('platter');
+  var elTonearm = document.getElementById('tonearm');
+  var elStrobe = document.getElementById('strobeRing');
+  var elSpeed33 = document.getElementById('speed33');
+  var elSpeed45 = document.getElementById('speed45');
+
+  var current = null;
+  var isPlaying = false;
+  var pitch = 0;
+  var rpm = 33.333;
+  var angle = 0;
+  var angularSpeed = 0;
+  var lastFrame = null;
+  var rafId = null;
+
+  var DOT_COUNT = 90;
+  var strobeAngle = 0;
+  var strobeTimer = null;
+  var strobeSpacing = 360 / DOT_COUNT;
+
+  function buildCrate(){
+    RECORDS.forEach(function(rec){
+      var spine = document.createElement('button');
+      spine.className = 'spine';
+      spine.style.background = 'linear-gradient(180deg, ' + rec.spine + ', ' + shade(rec.spine,-18) + ')';
+      spine.setAttribute('aria-label', 'Load ' + rec.title + ' by ' + rec.artist);
+      var txt = document.createElement('span');
+      txt.className = 'spine-text';
+      txt.style.color = rec.label;
+      txt.textContent = rec.title + ' — ' + rec.artist;
+      spine.appendChild(txt);
+      spine.addEventListener('click', function(){ loadRecord(rec, spine); });
+      elCrateRail.appendChild(spine);
+    });
+  }
+
+  function shade(hex, pct){
+    var n = parseInt(hex.slice(1),16);
+    var r = Math.min(255,Math.max(0,(n>>16)+pct));
+    var g = Math.min(255,Math.max(0,((n>>8)&255)+pct));
+    var b = Math.min(255,Math.max(0,(n&255)+pct));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  function loadRecord(rec, spineEl){
+    stopPlayback();
+    current = rec;
+    document.querySelectorAll('.spine').forEach(function(s){ s.classList.remove('selected'); });
+    spineEl.classList.add('selected');
+    elLabel.style.background = rec.label;
+    elLabel.style.color = rec.labelText;
+    elLabelTitle.textContent = rec.title;
+    elLabelArtist.textContent = rec.artist;
+    elStatus.textContent = 'Loaded, ready';
+    elNowPlaying.textContent = rec.title + ' · ' + rec.artist;
+    elPlay.disabled = false;
+    elStop.disabled = true;
+    setupAudio(rec);
+  }
+
+  /* ---------------- audio engine ---------------- */
+  var ctx = null;
+  var master = null;
+  var audioEl = null;
+  var noiseNode = null;
+  var popTimer = null;
+
+  function ensureCtx(){
+    if(!ctx){
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain();
+      master.gain.value = 0.0001;
+      master.connect(ctx.destination);
+    }
+    if(ctx.state === 'suspended') ctx.resume();
+  }
+
+  function currentFactor(){
+    return (1 + pitch/100) * (rpm/33.333);
+  }
+
+  // The record plays as a plain <audio> element with its own volume control,
+  // rather than being routed through the Web Audio graph. Piping local files
+  // through createMediaElementSource gets silently muted by some browsers
+  // when the page is opened as a file:// URL instead of served over http —
+  // this sidesteps that entirely. The crackle bed below stays on the Web
+  // Audio graph since it's pure synthesis, not an external file.
+  function setupAudio(rec){
+    ensureCtx();
+    if(audioEl){ audioEl.pause(); }
+    audioEl = new Audio(rec.src);
+    audioEl.loop = true;
+    audioEl.preload = 'auto';
+    audioEl.volume = 0;
+    // Turning off pitch preservation is what makes playbackRate behave like
+    // real vinyl: speed and pitch move together instead of the browser
+    // auto-correcting pitch back to normal.
+    audioEl.preservesPitch = false;
+    audioEl.mozPreservesPitch = false;
+    audioEl.webkitPreservesPitch = false;
+    audioEl.addEventListener('error', function(){
+      elStatus.textContent = 'Could not load ' + rec.src;
+    });
+  }
+
+  function fadeAudioVolume(target, durationMs){
+    if(!audioEl) return;
+    var start = audioEl.volume;
+    var t0 = null;
+    function step(t){
+      if(!audioEl) return;
+      if(t0 === null) t0 = t;
+      var frac = Math.min(1, (t - t0) / durationMs);
+      audioEl.volume = start + (target - start) * frac;
+      if(frac < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function makeNoiseBuffer(){
+    var len = ctx.sampleRate * 2;
+    var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    var d = buf.getChannelData(0);
+    for(var i=0;i<len;i++) d[i] = (Math.random()*2-1);
+    return buf;
+  }
+
+  function startCrackle(){
+    noiseNode = ctx.createBufferSource();
+    noiseNode.buffer = makeNoiseBuffer();
+    noiseNode.loop = true;
+    var hp = ctx.createBiquadFilter();
+    hp.type='highpass'; hp.frequency.value = 3200;
+    var g = ctx.createGain();
+    g.gain.value = 0.004;
+    noiseNode.connect(hp).connect(g).connect(master);
+    noiseNode.start();
+    schedulePop();
+  }
+
+  function schedulePop(){
+    popTimer = setTimeout(function(){
+      if(!isPlaying) return;
+      var src = ctx.createBufferSource();
+      src.buffer = makeNoiseBuffer();
+      var bp = ctx.createBiquadFilter();
+      bp.type='bandpass'; bp.frequency.value = 4000+Math.random()*2000;
+      var g = ctx.createGain();
+      var t = ctx.currentTime;
+      g.gain.setValueAtTime(0.015+Math.random()*0.015, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+0.02);
+      src.connect(bp).connect(g).connect(master);
+      src.start(t); src.stop(t+0.03);
+      schedulePop();
+    }, 400 + Math.random()*1400);
+  }
+
+  function stopCrackle(){
+    if(popTimer) clearTimeout(popTimer);
+    if(noiseNode){ try{ noiseNode.stop(); }catch(e){} noiseNode=null; }
+  }
+
+  function fadeMaster(target, dur){
+    var now = ctx.currentTime;
+    master.gain.cancelScheduledValues(now);
+    master.gain.setTargetAtTime(target, now, dur);
+  }
+
+  function startPlayback(){
+    if(!current || !audioEl) return;
+    ensureCtx();
+    isPlaying = true;
+    audioEl.playbackRate = currentFactor();
+    audioEl.currentTime = 0;
+    audioEl.volume = 0;
+    var playPromise = audioEl.play();
+    if(playPromise && playPromise.catch){
+      playPromise.catch(function(err){
+        elStatus.textContent = 'Playback blocked: ' + err.message;
+      });
+    }
+    fadeAudioVolume(0.9, 150);
+    fadeMaster(0.9, 0.15);
+    startCrackle();
+
+    elPower.classList.add('on');
+    elTonearm.classList.add('playing');
+    elStatus.textContent = 'Playing';
+    elPlay.classList.add('active');
+    elPlay.textContent = 'Playing';
+    elStop.disabled = false;
+
+    recalibrateStrobe();
+    startStrobe();
+  }
+
+  function stopPlayback(){
+    if(!isPlaying){ return; }
+    isPlaying = false;
+    if(audioEl){
+      fadeAudioVolume(0, 200);
+      setTimeout(function(){ if(audioEl) audioEl.pause(); }, 220);
+    }
+    stopCrackle();
+    if(ctx) fadeMaster(0.0001, 0.2);
+
+    elPower.classList.remove('on');
+    elTonearm.classList.remove('playing');
+    elStatus.textContent = current ? 'Loaded, ready' : 'Standing by';
+    elPlay.classList.remove('active');
+    elPlay.textContent = 'Play';
+    elStop.disabled = true;
+    stopStrobe();
+  }
+
+  /* ---------------- visual: platter + strobe ---------------- */
+  function visualFrame(t){
+    if(lastFrame === null) lastFrame = t;
+    var dt = (t - lastFrame)/1000;
+    lastFrame = t;
+
+    var baseDegPerSec = (rpm/60)*360;
+    var targetSpeed = isPlaying ? baseDegPerSec * (1+pitch/100) : 0;
+    angularSpeed += (targetSpeed - angularSpeed) * Math.min(1, dt*3.2);
+    if(!isPlaying && Math.abs(angularSpeed) < 0.5) angularSpeed = 0;
+    angle = (angle + angularSpeed*dt) % 360;
+    elPlatter.style.transform = 'rotate(' + angle.toFixed(2) + 'deg)';
+
+    rafId = requestAnimationFrame(visualFrame);
+  }
+  requestAnimationFrame(visualFrame);
+
+  function buildStrobeDots(){
+    elStrobe.innerHTML = '';
+    for(var i=0;i<DOT_COUNT;i++){
+      var d = document.createElement('div');
+      d.className = 'strobe-dot';
+      d.style.transform = 'rotate(' + (i*strobeSpacing) + 'deg)';
+      elStrobe.appendChild(d);
+    }
+  }
+  buildStrobeDots();
+
+  function recalibrateStrobe(){
+    var baseDegPerSec = (rpm/60)*360;
+    var tickMs = (strobeSpacing/baseDegPerSec)*1000;
+    if(strobeTimer) clearInterval(strobeTimer);
+    if(isPlaying){
+      strobeTimer = setInterval(function(){
+        strobeAngle = (strobeAngle + strobeSpacing*(1+pitch/100)) % 360;
+        elStrobe.style.transform = 'rotate(' + strobeAngle.toFixed(3) + 'deg)';
+      }, Math.max(4, tickMs));
+    }
+  }
+  function startStrobe(){ recalibrateStrobe(); }
+  function stopStrobe(){ if(strobeTimer) clearInterval(strobeTimer); }
+
+  /* ---------------- events ---------------- */
+  elPlay.addEventListener('click', function(){
+    if(!current) return;
+    startPlayback();
+  });
+  elStop.addEventListener('click', function(){
+    stopPlayback();
+  });
+
+  elPitch.addEventListener('input', function(){
+    var v = parseFloat(elPitch.value);
+    if(Math.abs(v) < 0.15) v = 0;
+    pitch = v;
+    elPitchOut.textContent = (v>0?'+':'') + v.toFixed(1) + '%';
+    if(audioEl) audioEl.playbackRate = currentFactor();
+  });
+
+  elSpeed33.addEventListener('click', function(){
+    rpm = 33.333;
+    elSpeed33.classList.add('active');
+    elSpeed45.classList.remove('active');
+    if(audioEl) audioEl.playbackRate = currentFactor();
+    if(isPlaying) recalibrateStrobe();
+  });
+  elSpeed45.addEventListener('click', function(){
+    rpm = 45;
+    elSpeed45.classList.add('active');
+    elSpeed33.classList.remove('active');
+    if(audioEl) audioEl.playbackRate = currentFactor();
+    if(isPlaying) recalibrateStrobe();
+  });
+
+  buildCrate();
+})();
+</script>
+</body>
+</html>
